@@ -6,7 +6,6 @@ public class Journal
 {
     private List<Entry> _entries = new List<Entry>();
     string journal = "journal.txt";
-    public List<string> _entries = new List<string>();
 
     public void AddEntry(string entry)
     {
