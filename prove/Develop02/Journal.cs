@@ -1,42 +1,58 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Enumeration;
+using System.Security.Cryptography.X509Certificates;
 
 public class Journal
 {
     private List<Entry> _entries = new List<Entry>();
-    string journal = "journal.txt";
+ 
 
-    public void AddEntry(string entry)
+    public void AddEntry(Entry entry)
     {
         _entries.Add(entry);
     }
 
     public void Display()
     {
-        foreach (string entry in _entries)
+        foreach (Entry entry in _entries)
         {
-            Console.WriteLine(entry);
+            //Console.WriteLine(entry);
+            entry.Display();
         }
     }
 
     public void SaveToFile(string filename)
     {
         using (StreamWriter outputFile = new StreamWriter(filename))
+
         {
-            foreach (string entry in _entries)
+            foreach (Entry entry in _entries)
             {
-                outputFile.WriteLine(entry);
+                string entryline = $"{entry._date}~{entry._prompt}~{entry._response}";
+                outputFile.WriteLine(entryline);
             }
         }
     }
 
-    public void LoadFromFile()
+    public void LoadFromFile(string fileName)
     {
-        if (File.Exists(journal))
+        if (File.Exists(fileName))
         {
-            string[] lines = File.ReadAllLines(journal);
-            _entries = new List<string>(lines);
+            string[] lines = System.IO.File.ReadAllLines(fileName);
+            foreach (string line in lines)
+            {
+                string[] parts = line.Split("~");
+
+                string date = parts[0];
+                string prompt = parts[1];
+                string response = parts[2];
+
+                Entry entry = new Entry(DateTime.Parse(date), prompt, response);
+
+                AddEntry(entry);
+            }
         }
         else
         {
@@ -60,9 +76,14 @@ public class Journal
 
             if (choice == "1")
             {
-                Console.Write("Enter your journal entry: ");
+                PromptGenerator prompt = new PromptGenerator();
+                string promptGiven = prompt.Generate();
+                Console.WriteLine(promptGiven);
                 string entry = Console.ReadLine();
-                AddEntry(entry);
+                DateTime date = DateTime.Now;
+                Entry entry1 = new Entry(date, promptGiven, entry);
+
+                AddEntry(entry1);
             }
             else if (choice == "2")
             {
@@ -70,11 +91,15 @@ public class Journal
             }
             else if (choice == "3")
             {
-                LoadFromFile();
+                Console.WriteLine("Enter Filename: ");
+                string fileName = Console.ReadLine();
+                LoadFromFile(fileName);
             }
             else if (choice == "4")
             {
-                SaveToFile(journal);
+                Console.WriteLine("Enter Filename: ");
+                string fileName = Console.ReadLine();
+                SaveToFile(fileName);
             }
         }
     }

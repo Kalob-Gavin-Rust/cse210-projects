@@ -23,7 +23,5 @@ class Program
         f3.GetBottom();
         Console.WriteLine(f3.GetFractionString());
         Console.WriteLine(f3.GetDecimalValue());
-    
-        
     }
 }
