@@ -15,4 +15,4 @@ class Program
         Console.WriteLine(a3.GetWritingInfo());
 
     }
-}
+} 
